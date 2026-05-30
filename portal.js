@@ -3,6 +3,11 @@
   const supabaseUrl = (cfg.supabaseUrl || "").replace(/\/$/, "");
   const functionName = cfg.functionName || "patient-portal";
   const hospitalName = cfg.hospitalName || "Lab Results Portal";
+  const hospitalTitle =
+    cfg.hospitalTitle || "GMMMC TEACHING HOSPITAL SUKKUR";
+  const hospitalNameUr =
+    cfg.hospitalNameUr || "جی ایم ایم سی ٹیچنگ ہسپتال سکھر";
+  const hospitalPhone = cfg.hospitalPhone || "071561223";
 
   const loginView = document.getElementById("login-view");
   const reportView = document.getElementById("report-view");
@@ -12,7 +17,23 @@
   const reportContent = document.getElementById("reportContent");
   const hospitalEl = document.getElementById("hospital-name");
 
+  let lastPatient = null;
+
   if (hospitalEl) hospitalEl.textContent = hospitalName;
+
+  function assetUrl(rel) {
+    const path = String(rel || "").replace(/^\//, "");
+    let base = (cfg.basePath || "").replace(/\/?$/, "");
+    if (!base) {
+      const p = window.location.pathname || "";
+      const dir = p.endsWith("/")
+        ? p.slice(0, -1)
+        : p.replace(/\/[^/]*$/, "");
+      if (dir && dir !== "/") base = dir;
+    }
+    if (!base) return path;
+    return `${base}/${path}`;
+  }
 
   function portalApiUrl() {
     return `${supabaseUrl}/functions/v1/${functionName}`;
@@ -34,6 +55,53 @@
     if (min && !max) return `&ge; ${escapeHtml(min)}`;
     if (!min && max) return `&le; ${escapeHtml(max)}`;
     return "";
+  }
+
+  function formatAgeGender(patient) {
+    const age =
+      patient.age !== null &&
+      patient.age !== undefined &&
+      patient.age !== "" &&
+      patient.age !== 0 &&
+      patient.age !== "0"
+        ? String(patient.age)
+        : "0";
+    const gender = patient.gender ? String(patient.gender) : "";
+    const g = gender ? (gender.endsWith(".") ? gender : `${gender}.`) : "—";
+    return `${age}/${g}`;
+  }
+
+  function renderLetterhead(patient) {
+    const logoLeft = assetUrl(cfg.logoLeft || "images/hospital_logo.png");
+    const logoRight = assetUrl(cfg.logoRight || "images/logo.png");
+    const mr = escapeHtml(patient.mr_no ?? "—");
+    const ageGender = escapeHtml(formatAgeGender(patient));
+
+    return `
+      <header class="hospital-letterhead">
+        <div class="letterhead-inner">
+          <img class="letterhead-logo" src="${logoLeft}" alt="">
+          <div class="letterhead-center">
+            <div class="letterhead-title">${escapeHtml(hospitalTitle)}</div>
+            ${
+              hospitalNameUr
+                ? `<div class="letterhead-urdu" dir="rtl">${escapeHtml(hospitalNameUr)}</div>`
+                : ""
+            }
+            ${
+              hospitalPhone
+                ? `<div class="letterhead-phone">${escapeHtml(hospitalPhone)}</div>`
+                : ""
+            }
+          </div>
+          <img class="letterhead-logo" src="${logoRight}" alt="">
+        </div>
+        <hr class="letterhead-rule">
+        <div class="letterhead-patient-row">
+          <span>Patient MR # : ${mr}</span>
+          <span>Age/Gender : ${ageGender}</span>
+        </div>
+      </header>`;
   }
 
   function toParamList(testValues) {
@@ -78,6 +146,7 @@
     const now = new Date();
     const grouped = groupByCategoryAndTest(tests);
     const categories = Object.keys(grouped).sort();
+    lastPatient = patient;
 
     if (categories.length === 0) {
       reportContent.innerHTML =
@@ -86,7 +155,7 @@
     }
 
     const sal = patient.salutation ? `${patient.salutation} ` : "";
-    let html = "";
+    let html = renderLetterhead(patient);
 
     categories.forEach((category, index) => {
       const testMap = grouped[category];
@@ -101,17 +170,20 @@
                 <td colspan="4" class="header-cell">
                   <div class="patient-info-boxes">
                     <div class="patient-info-box">
-                      <div class="info-row"><span class="info-label">Lab No:</span> <span class="info-value">${escapeHtml(patient.mr_no)}</span></div>
+                      <div class="info-row"><span class="info-label">Lab No:</span> <span class="info-value">${escapeHtml(patient.mr_no ?? "N/A")}</span></div>
                       <div class="info-row"><span class="info-label">Name:</span> <span class="info-value">${escapeHtml(sal)}${escapeHtml(patient.patient_name || "")}</span></div>
                       <div class="info-row"><span class="info-label">Age / Sex:</span> <span class="info-value">${escapeHtml(String(patient.age ?? ""))} / ${escapeHtml(patient.gender || "")}</span></div>
-                      <div class="info-row"><span class="info-label">Shift:</span> <span class="info-value">${escapeHtml(patient.shift || "—")}</span></div>
+                      <div class="info-row"><span class="info-label">Shift:</span> <span class="info-value">${escapeHtml(patient.shift || "N/A")}</span></div>
                     </div>
                     <div class="patient-info-box">
-                      <div class="info-row"><span class="info-label">Token:</span> <span class="info-value">${escapeHtml(patient.patient_token || "—")}</span></div>
+                      <div class="info-row"><span class="info-label">Branch:</span> <span class="info-value">Sukkur Branch</span></div>
+                      <div class="info-row"><span class="info-label">Collection:</span> <span class="info-value">${escapeHtml(now.toLocaleString())}</span></div>
                       <div class="info-row"><span class="info-label">Reported:</span> <span class="info-value">${escapeHtml(now.toLocaleString())}</span></div>
                     </div>
                   </div>
-                  <span class="category-title">${escapeHtml(category)}</span>
+                  <div class="category-title-block">
+                    <span class="category-title">${escapeHtml(category)}</span>
+                  </div>
                 </td>
               </tr>
               <tr class="column-headers-row">
@@ -137,22 +209,82 @@
       html += `</tbody></table></div>`;
     });
 
-    html += `
-      <footer class="report-footer">
-        <div class="sig-section">
-          <div class="footer-info">
-            <p>Online report — ${escapeHtml(hospitalName)}</p>
-            <p>Printed: ${escapeHtml(now.toLocaleString())}</p>
-            <p>LabFlow Patient Portal</p>
-          </div>
-          <div class="sig-block">
-            <div class="sig-line"></div>
-            <span class="sig-text">Authorized signature</span>
-          </div>
-        </div>
-      </footer>`;
-
     reportContent.innerHTML = html;
+  }
+
+  function getReportDocumentHtml() {
+    const sheetLinks = Array.from(
+      document.querySelectorAll('link[rel="stylesheet"]'),
+    )
+      .map((l) => l.href)
+      .filter(Boolean);
+
+    const styles = sheetLinks
+      .map((href) => `<link rel="stylesheet" href="${href}">`)
+      .join("\n");
+
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8">${styles}
+<style>
+body { margin: 0; padding: 16px; background: #fff; }
+.report-preview-container { box-shadow: none; max-width: none; padding: 0; min-height: 0; }
+</style></head><body><div class="report-preview-container">${reportContent.innerHTML}</div></body></html>`;
+  }
+
+  function printReport() {
+    if (!reportContent.querySelector(".category-wrapper")) return;
+    const w = window.open("", "_blank", "width=900,height=700");
+    if (!w) {
+      window.print();
+      return;
+    }
+    w.document.write(getReportDocumentHtml());
+    w.document.close();
+    w.onload = () => {
+      setTimeout(() => {
+        w.focus();
+        w.print();
+      }, 400);
+    };
+  }
+
+  function saveAsPdf() {
+    if (!reportContent.querySelector(".category-wrapper")) {
+      alert("No report to save.");
+      return;
+    }
+    if (typeof html2pdf === "undefined") {
+      alert("PDF library failed to load. Please refresh and try again.");
+      return;
+    }
+
+    const btn = document.getElementById("btn-save-pdf");
+    const mr = lastPatient?.mr_no || "report";
+    const filename = `LabReport_${mr}.pdf`;
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Saving…";
+    }
+
+    const opt = {
+      margin: [8, 8, 8, 8],
+      filename,
+      image: { type: "jpeg", quality: 0.96 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      pagebreak: { mode: ["css", "legacy"] },
+    };
+
+    html2pdf()
+      .set(opt)
+      .from(reportContent)
+      .save()
+      .finally(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "Save PDF";
+        }
+      });
   }
 
   function showLogin(msg) {
@@ -230,12 +362,12 @@
     }
   });
 
-  document.getElementById("btn-print").addEventListener("click", () => {
-    window.print();
-  });
+  document.getElementById("btn-print").addEventListener("click", printReport);
+  document.getElementById("btn-save-pdf").addEventListener("click", saveAsPdf);
 
   document.getElementById("btn-logout").addEventListener("click", () => {
     loginForm.reset();
+    lastPatient = null;
     showLogin();
   });
 

@@ -1,6 +1,7 @@
 /* Patient Report Print Styles */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap');
 
 :root {
     --primary-color: #111827;
@@ -41,6 +42,7 @@ body {
 }
 
 .btn-print,
+.btn-save-pdf,
 .btn-back {
     display: flex;
     align-items: center;
@@ -66,6 +68,22 @@ body {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
+.btn-save-pdf {
+    background-color: #1d4ed8;
+    color: white;
+}
+
+.btn-save-pdf:hover:not(:disabled) {
+    background-color: #1e40af;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.btn-save-pdf:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
 .btn-back {
     background-color: white;
     color: var(--text-main);
@@ -86,18 +104,81 @@ body {
     padding: 40px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     min-height: 1120px;
-    /* On screen, footer pushes down */
     position: relative;
-    padding-bottom: 180px;
-    /* Space for footer */
 }
 
-/* Header Area (Empty for Logo) - Visible on Screen, Hidden in Print (use margins) */
-.report-header {
-    height: 140px;
-    margin-bottom: 20px;
-    border: 1px dashed #eee;
-    /* Visual guide on screen */
+/* Hospital letterhead — matches main app printed header */
+.hospital-letterhead {
+    margin-bottom: 18px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.letterhead-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.letterhead-logo {
+    width: 90px;
+    height: 90px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.letterhead-center {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+}
+
+.letterhead-title {
+    font-weight: 700;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    color: #000;
+}
+
+.letterhead-urdu {
+    font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 2px;
+    line-height: 1.5;
+    color: #000;
+}
+
+.letterhead-phone {
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 4px;
+    text-align: left;
+    padding-left: 18%;
+    color: #000;
+}
+
+.letterhead-rule {
+    border: none;
+    border-top: 1.5px solid #000;
+    margin: 10px 0 8px;
+}
+
+.letterhead-patient-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    font-weight: 700;
+    color: #000;
+    gap: 16px;
+}
+
+.category-title-block {
+    margin-top: 4px;
 }
 
 /* Category Table - The Core Structure */
@@ -264,43 +345,6 @@ body {
     font-size: 12px;
 }
 
-/* Footer - Screen View: Absolute Bottom */
-.report-footer {
-    position: absolute;
-    bottom: 20px;
-    left: 40px;
-    right: 40px;
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
-}
-
-.sig-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.footer-info p {
-    margin: 2px 0;
-    font-size: 10px;
-    color: #666;
-}
-
-.sig-block {
-    text-align: center;
-    width: 200px;
-}
-
-.sig-line {
-    border-top: 1px solid #000;
-    margin-bottom: 5px;
-}
-
-.sig-text {
-    font-size: 11px;
-    font-weight: 700;
-}
-
 /* Print Specifics */
 @media print {
     body {
@@ -325,21 +369,16 @@ body {
         display: none;
     }
 
-    /* Page Setup */
     @page {
         size: A4;
-        /* Spacing for Header/Logo on EVERY Page */
-        margin-top: 5cm;
-        /* Spacing for Footer on EVERY Page */
-        margin-bottom: 4cm;
+        margin-top: 12mm;
+        margin-bottom: 15mm;
         margin-left: 1.5cm;
         margin-right: 1.5cm;
     }
 
-    /* Reduce spacing for header div since @page handles it */
-    .report-header {
-        display: none;
-        /* Hide the div, use margin instead */
+    .hospital-letterhead {
+        display: block;
     }
 
     /* Force page break after each category table */
@@ -365,30 +404,8 @@ body {
         page-break-inside: avoid;
     }
 
-    /* Clean up borders for print */
     .patient-info-card-print {
         border: 1px solid #ccc;
-    }
-
-    /* FIXED FOOTER ON EACH PAGE */
-    .report-footer {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 3cm;
-        /* Same as ~margin-bottom logic */
-        padding-top: 10px;
-        background: white;
-        /* Opaque background */
-        border-top: none;
-        /* Or keep line if desired */
-        z-index: 1000;
-        /* Reset absolute positioning from screen view */
-        margin: 0;
-        padding-left: 0;
-        padding-right: 0;
     }
 }
 
