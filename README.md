@@ -2,6 +2,10 @@
 
 Static site for patients to view **completed** lab results using **MR number** (or patient token) and **PIN** from their receipt.
 
+**Go-live checklist for [gmmmc-USER-PRINT](https://github.com/BlackDevilOC/gmmmc-USER-PRINT):** see [SETUP_GITHUB_PAGES.md](SETUP_GITHUB_PAGES.md).
+
+**Backend status:** Supabase Edge Function `patient-portal` is deployed (`verify_jwt` off; MR + PIN auth).
+
 ## Architecture
 
 - **This folder** — HTML/CSS/JS hosted on GitHub Pages (no secrets in the browser).
