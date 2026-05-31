@@ -1,381 +1,761 @@
-/* Patient portal — compact screen preview + login */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap');
-
-:root {
-    --primary-color: #111827;
-    --secondary-color: #4b5563;
-    --border-color: #e5e7eb;
-    --bg-light: #f9fafb;
-    --text-main: #1f2937;
-}
-
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #eef1f5;
-    margin: 0;
-    padding: 20px;
-    color: var(--text-main);
-}
-
-/* ---- Action bar ---- */
-.print-actions {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    gap: 10px;
-    z-index: 1000;
-}
-
-.btn-print,
-.btn-save-pdf,
-.btn-back {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: none;
-    transition: all 0.2s ease;
-}
-
-.btn-print {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-print:hover {
-    background-color: #000;
-    transform: translateY(-1px);
-}
-
-.btn-save-pdf {
-    background-color: #1d4ed8;
-    color: white;
-}
-
-.btn-save-pdf:hover:not(:disabled) {
-    background-color: #1e40af;
-    transform: translateY(-1px);
-}
-
-.btn-save-pdf:disabled {
-    opacity: 0.65;
-    cursor: wait;
-}
-
-.btn-back {
-    background-color: white;
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-}
-
-.btn-back:hover {
-    background-color: #f9fafb;
-    border-color: #d1d5db;
-}
-
-/* ---- Screen preview container (NOT A4 — flows freely) ---- */
-.report-preview-container {
-    max-width: 920px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 28px 32px 36px;
-    border-radius: 12px;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
-}
-
-.report-screen {
-    color: #111;
-}
-
-/* ---- Letterhead (screen) ---- */
-.hospital-letterhead {
-    margin-bottom: 14px;
-}
-
-.letterhead-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.letterhead-logo {
-    width: 72px;
-    height: 72px;
-    object-fit: contain;
-    flex-shrink: 0;
-}
-
-.letterhead-center {
-    flex: 1;
-    text-align: center;
-    min-width: 0;
-}
-
-.letterhead-title {
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    line-height: 1.25;
-    color: #000;
-}
-
-.letterhead-urdu {
-    font-family: 'Noto Nastaliq Urdu', serif;
-    font-size: 14px;
-    font-weight: 600;
-    margin-top: 2px;
-    line-height: 1.5;
-}
-
-.letterhead-phone {
-    font-size: 12px;
-    font-weight: 700;
-    margin-top: 4px;
-    text-align: left;
-    padding-left: 18%;
-}
-
-.letterhead-rule {
-    border: none;
-    border-top: 1.5px solid #000;
-    margin: 8px 0 6px;
-}
-
-.letterhead-patient-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 700;
-    gap: 12px;
-}
-
-/* ---- Compact patient summary bar ---- */
-.screen-patient-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    padding: 10px 14px;
-    margin-bottom: 18px;
-    background: #f3f4f6;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 12px;
-    color: #374151;
-}
-
-.screen-patient-bar strong {
-    color: #111827;
-    font-weight: 700;
-}
-
-/* ---- Category sections (continuous flow) ---- */
-.screen-category {
-    margin-bottom: 20px;
-    padding-top: 12px;
-    border-top: 2px solid #111;
-}
-
-.screen-category:first-of-type {
-    margin-top: 4px;
-}
-
-.screen-category-title {
-    margin: 0 0 8px;
-    padding-top: 4px;
-    font-size: 15px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #111;
-}
-
-.screen-results-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-}
-
-.screen-results-table thead th {
-    text-align: left;
-    font-weight: 700;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 6px 8px;
-    background: #f8fafc;
-    border-top: 1px solid #cbd5e1;
-    border-bottom: 1px solid #cbd5e1;
-    color: #374151;
-}
-
-.screen-results-table .col-test-name { width: 38%; padding-left: 8px; }
-.screen-results-table .col-result { width: 14%; text-align: center; }
-.screen-results-table .col-unit { width: 12%; color: var(--secondary-color); }
-.screen-results-table .col-range { width: 36%; text-align: right; padding-right: 8px; color: var(--secondary-color); font-size: 12px; }
-
-.screen-test-group td {
-    font-weight: 800;
-    font-size: 12px;
-    text-transform: uppercase;
-    padding: 10px 8px 3px;
-    color: #111;
-}
-
-.screen-results-table tbody td {
-    padding: 3px 8px;
-    vertical-align: top;
-    line-height: 1.35;
-}
-
-.screen-remarks td {
-    padding: 4px 8px 6px;
-    font-size: 11px;
-    color: #b91c1c;
-    font-weight: 600;
-    border-top: 1px dashed #d1d5db;
-}
-
-.screen-remarks-label {
-    font-weight: 800;
-    text-transform: uppercase;
-    font-size: 10px;
-    margin-right: 4px;
-}
-
-.screen-report-footer {
-    margin-top: 24px;
-    padding-top: 14px;
-    border-top: 1px solid #111;
-    text-align: center;
-    font-size: 11px;
-    font-weight: 700;
-    color: #111;
-}
-
-.screen-footer-sub {
-    margin-top: 4px;
-    font-weight: 600;
-    color: #374151;
-}
-
-/* ---- Login ---- */
-.login-view {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-}
-
-.login-card {
-    width: 100%;
-    max-width: 420px;
-    background: white;
-    border-radius: 12px;
-    padding: 32px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-}
-
-.login-title {
-    margin: 0 0 8px;
-    font-size: 1.35rem;
-    color: var(--primary-color);
-}
-
-.login-subtitle {
-    margin: 0 0 24px;
-    color: var(--secondary-color);
-    font-size: 0.9rem;
-}
-
-.login-card label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: #374151;
-}
-
-.login-card input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 12px;
-    margin-bottom: 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.btn-primary {
-    width: 100%;
-    padding: 12px;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background: #000;
-}
-
-.btn-primary:disabled {
-    opacity: 0.7;
-    cursor: wait;
-}
-
-.login-error {
-    color: #b91c1c;
-    font-size: 0.9rem;
-    margin: 0 0 12px;
-}
-
-.report-view[hidden],
-.login-view[hidden] {
-    display: none !important;
-}
-
-.empty-msg,
-.loading-msg {
-    text-align: center;
-    padding: 48px 24px;
-    color: var(--secondary-color);
-}
-
-@media (max-width: 640px) {
-    body { padding: 12px; }
-    .report-preview-container { padding: 18px 16px 24px; }
-    .print-actions {
-        position: static;
-        justify-content: flex-end;
-        margin-bottom: 12px;
-        flex-wrap: wrap;
-    }
-    .letterhead-logo { width: 52px; height: 52px; }
-    .letterhead-title { font-size: 11px; }
-    .screen-patient-bar { flex-direction: column; gap: 4px; }
-}
-
-@media print {
-    body { background: #fff; padding: 0; }
-    .print-actions { display: none !important; }
-    .report-preview-container {
-        box-shadow: none;
-        padding: 0;
-        max-width: none;
-        border-radius: 0;
-    }
-}
-
+/* Patient portal — compact screen preview + login */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap');
+
+
+
+:root {
+
+    --primary-color: #111827;
+
+    --secondary-color: #4b5563;
+
+    --border-color: #e5e7eb;
+
+    --bg-light: #f9fafb;
+
+    --text-main: #1f2937;
+
+}
+
+
+
+body {
+
+    font-family: 'Inter', sans-serif;
+
+    background-color: #eef1f5;
+
+    margin: 0;
+
+    padding: 20px;
+
+    color: var(--text-main);
+
+}
+
+
+
+/* ---- Action bar ---- */
+
+.print-actions {
+
+    position: fixed;
+
+    top: 20px;
+
+    right: 20px;
+
+    display: flex;
+
+    gap: 10px;
+
+    z-index: 1000;
+
+}
+
+
+
+.btn-print,
+
+.btn-save-pdf,
+
+.btn-back {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 10px 18px;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    font-size: 14px;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    border: none;
+
+    transition: all 0.2s ease;
+
+}
+
+
+
+.btn-print {
+
+    background-color: var(--primary-color);
+
+    color: white;
+
+}
+
+
+
+.btn-print:hover {
+
+    background-color: #000;
+
+    transform: translateY(-1px);
+
+}
+
+
+
+.btn-save-pdf {
+
+    background-color: #1d4ed8;
+
+    color: white;
+
+}
+
+
+
+.btn-save-pdf:hover:not(:disabled) {
+
+    background-color: #1e40af;
+
+    transform: translateY(-1px);
+
+}
+
+
+
+.btn-save-pdf:disabled {
+
+    opacity: 0.65;
+
+    cursor: wait;
+
+}
+
+
+
+.btn-back {
+
+    background-color: white;
+
+    color: var(--text-main);
+
+    border: 1px solid var(--border-color);
+
+}
+
+
+
+.btn-back:hover {
+
+    background-color: #f9fafb;
+
+    border-color: #d1d5db;
+
+}
+
+
+
+/* ---- Screen preview container (NOT A4 — flows freely) ---- */
+
+.report-preview-container {
+
+    max-width: 920px;
+
+    margin: 0 auto;
+
+    background: #fff;
+
+    padding: 28px 32px 36px;
+
+    border-radius: 12px;
+
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
+
+}
+
+
+
+.report-screen {
+
+    color: #111;
+
+}
+
+
+
+/* ---- Letterhead (screen) ---- */
+
+.hospital-letterhead {
+
+    margin-bottom: 14px;
+
+}
+
+
+
+.letterhead-inner {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+}
+
+
+
+.letterhead-logo {
+
+    width: 88px;
+
+    height: 88px;
+
+    object-fit: contain;
+
+    flex-shrink: 0;
+
+}
+
+
+
+.letterhead-center {
+
+    flex: 1;
+
+    text-align: center;
+
+    min-width: 0;
+
+}
+
+
+
+.letterhead-title {
+
+    font-weight: 700;
+
+    font-size: 16px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.02em;
+
+    line-height: 1.25;
+
+    color: #000;
+
+}
+
+
+
+.letterhead-urdu {
+
+    font-family: 'Noto Nastaliq Urdu', serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-top: 2px;
+
+    line-height: 1.5;
+
+}
+
+
+
+.letterhead-phone {
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    margin-top: 4px;
+
+    text-align: left;
+
+    padding-left: 18%;
+
+}
+
+
+
+.letterhead-rule {
+
+    border: none;
+
+    border-top: 1.5px solid #000;
+
+    margin: 8px 0 6px;
+
+}
+
+
+
+.letterhead-patient-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    gap: 12px;
+
+}
+
+
+
+/* ---- Compact patient summary bar ---- */
+
+.screen-patient-bar {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px 20px;
+
+    padding: 10px 14px;
+
+    margin-bottom: 18px;
+
+    background: #f3f4f6;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    color: #374151;
+
+}
+
+
+
+.screen-patient-bar strong {
+
+    color: #111827;
+
+    font-weight: 700;
+
+}
+
+
+
+/* ---- Category sections (continuous flow) ---- */
+
+.screen-category {
+
+    margin-bottom: 20px;
+
+    padding-top: 12px;
+
+    border-top: 2px solid #111;
+
+}
+
+
+
+.screen-category:first-of-type {
+
+    margin-top: 4px;
+
+}
+
+
+
+.screen-category-title {
+
+    margin: 0 0 8px;
+
+    padding-top: 4px;
+
+    font-size: 15px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.04em;
+
+    color: #111;
+
+}
+
+
+
+.screen-results-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 13px;
+
+}
+
+
+
+.screen-results-table thead th {
+
+    text-align: left;
+
+    font-weight: 700;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.03em;
+
+    padding: 6px 8px;
+
+    background: #f8fafc;
+
+    border-top: 1px solid #cbd5e1;
+
+    border-bottom: 1px solid #cbd5e1;
+
+    color: #374151;
+
+}
+
+
+
+.screen-results-table .col-test-name { width: 38%; padding-left: 8px; }
+
+.screen-results-table .col-result { width: 14%; text-align: center; }
+
+.screen-results-table .col-unit { width: 12%; color: var(--secondary-color); }
+
+.screen-results-table .col-range { width: 36%; text-align: right; padding-right: 8px; color: var(--secondary-color); font-size: 12px; }
+
+
+
+.screen-test-group td {
+
+    font-weight: 800;
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    padding: 10px 8px 3px;
+
+    color: #111;
+
+}
+
+
+
+.screen-results-table tbody td {
+
+    padding: 3px 8px;
+
+    vertical-align: top;
+
+    line-height: 1.35;
+
+}
+
+
+
+.screen-remarks td {
+
+    padding: 4px 8px 6px;
+
+    font-size: 11px;
+
+    color: #b91c1c;
+
+    font-weight: 600;
+
+    border-top: 1px dashed #d1d5db;
+
+}
+
+
+
+.screen-remarks-label {
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    font-size: 10px;
+
+    margin-right: 4px;
+
+}
+
+
+
+.screen-report-footer {
+
+    margin-top: 24px;
+
+    padding-top: 14px;
+
+    border-top: 1px solid #111;
+
+    text-align: center;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #111;
+
+}
+
+
+
+.screen-footer-sub {
+
+    margin-top: 4px;
+
+    font-weight: 600;
+
+    color: #374151;
+
+}
+
+
+
+/* ---- Login ---- */
+
+.login-view {
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 24px;
+
+}
+
+
+
+.login-card {
+
+    width: 100%;
+
+    max-width: 420px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 32px;
+
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+
+}
+
+
+
+.login-title {
+
+    margin: 0 0 8px;
+
+    font-size: 1.35rem;
+
+    color: var(--primary-color);
+
+}
+
+
+
+.login-subtitle {
+
+    margin: 0 0 24px;
+
+    color: var(--secondary-color);
+
+    font-size: 0.9rem;
+
+}
+
+
+
+.login-card label {
+
+    display: block;
+
+    font-size: 0.85rem;
+
+    font-weight: 600;
+
+    margin-bottom: 6px;
+
+    color: #374151;
+
+}
+
+
+
+.login-card input {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    margin-bottom: 16px;
+
+    border: 1px solid var(--border-color);
+
+    border-radius: 8px;
+
+    font-size: 1rem;
+
+}
+
+
+
+.btn-primary {
+
+    width: 100%;
+
+    padding: 12px;
+
+    background: var(--primary-color);
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    font-weight: 600;
+
+    font-size: 1rem;
+
+    cursor: pointer;
+
+}
+
+
+
+.btn-primary:hover:not(:disabled) {
+
+    background: #000;
+
+}
+
+
+
+.btn-primary:disabled {
+
+    opacity: 0.7;
+
+    cursor: wait;
+
+}
+
+
+
+.login-error {
+
+    color: #b91c1c;
+
+    font-size: 0.9rem;
+
+    margin: 0 0 12px;
+
+}
+
+
+
+.report-view[hidden],
+
+.login-view[hidden] {
+
+    display: none !important;
+
+}
+
+
+
+.empty-msg,
+
+.loading-msg {
+
+    text-align: center;
+
+    padding: 48px 24px;
+
+    color: var(--secondary-color);
+
+}
+
+
+
+@media (max-width: 640px) {
+
+    body { padding: 12px; }
+
+    .report-preview-container { padding: 18px 16px 24px; }
+
+    .print-actions {
+
+        position: static;
+
+        justify-content: flex-end;
+
+        margin-bottom: 12px;
+
+        flex-wrap: wrap;
+
+    }
+
+    .letterhead-logo { width: 52px; height: 52px; }
+
+    .letterhead-title { font-size: 11px; }
+
+    .screen-patient-bar { flex-direction: column; gap: 4px; }
+
+}
+
+
+
+@media print {
+
+    body { background: #fff; padding: 0; }
+
+    .print-actions { display: none !important; }
+
+    .report-preview-container {
+
+        box-shadow: none;
+
+        padding: 0;
+
+        max-width: none;
+
+        border-radius: 0;
+
+    }
+
+}
+
+

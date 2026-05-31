@@ -20,79 +20,43 @@
 
 
 
-  /** Standard A4 portal print — not tied to in-lab preprinted paper settings. */
+  /** Same pagination defaults as main LabFlow app (lab_test_print_preview). */
   const DEFAULT_PRINT_SETTINGS = {
-
     page_size: "A4",
-
-    page_top_margin: 15,
-
+    page_top_margin: 25,
     page_right_margin: 15,
-
-    page_bottom_margin: 15,
-
+    page_bottom_margin: 25,
     page_left_margin: 15,
-
-    header_height: 108,
-
+    header_height: 168,
     category_font_size: 18,
-
     group_font_size: 15,
-
     test_name_font_size: 14,
-
     result_font_size: 14,
-
     patient_info_font_size: 14,
-
     patient_info_label_font_size: 14,
-
     footer_font_size: 11,
-
-    patient_info_padding_vertical: 6,
-
-    patient_info_row_gap: 5,
-
-    patient_info_label_width: 120,
-
-    patient_info_bottom_margin: 4,
-
+    patient_info_padding_vertical: 8,
+    patient_info_row_gap: 6,
+    patient_info_label_width: 140,
+    patient_info_bottom_margin: 8,
     table_header_padding_vertical: 8,
-
     table_header_padding_horizontal: 12,
-
     table_cell_padding_vertical: 4,
-
     table_cell_padding_horizontal: 12,
-
     category_padding_top: 10,
-
     category_padding_bottom: 4,
-
     category_border_width: 2,
-
-    group_padding_top: 10,
-
+    group_padding_top: 8,
     group_padding_bottom: 2,
-
     group_padding_left: 4,
-
     footer_margin_top: 0,
-
     footer_padding_top: 8,
-
     display_verified_by: false,
-
     display_pathologist_signature: false,
-
     footer_line1: "Electronic Signature : System Generated",
-
     footer_line2: "Printed on: {timestamp}",
-
     footer_line3: "LabFlow Diagnostics System by rehan ahmed",
-
     primary_color: "#111827",
-
   };
 
 
@@ -224,25 +188,7 @@
 
 
   function getPrintSettings() {
-
-    const merged = {
-
-      ...DEFAULT_PRINT_SETTINGS,
-
-      ...(cfg.printSettings || {}),
-
-    };
-
-    const letterheadExtra = cfg.letterheadHeaderExtra ?? 50;
-
-    return {
-
-      ...merged,
-
-      header_height: (merged.header_height || 108) + letterheadExtra,
-
-    };
-
+    return { ...DEFAULT_PRINT_SETTINGS, ...(cfg.printSettings || {}) };
   }
 
 
@@ -397,126 +343,83 @@
 
 
 
-  function renderLetterheadPrintCompact() {
-
+  function renderPrintHeaderBand() {
     const logoLeft = cfg.logoLeft
-
       ? assetUrl(cfg.logoLeft)
-
       : "images/hospital_logo.png";
-
     const logoRight = cfg.logoRight ? assetUrl(cfg.logoRight) : "images/logo.png";
 
-
-
     return `
-
-      <div class="print-letterhead">
-
-        <img class="print-letterhead-logo" src="${logoLeft}" alt="">
-
-        <div class="print-letterhead-center">
-
-          <div class="print-letterhead-title">${escapeHtml(hospitalTitle)}</div>
-
+      <div class="print-header-band">
+        <img class="print-logo" src="${logoLeft}" alt="">
+        <div class="print-header-band-center">
+          <div class="print-header-band-title">${escapeHtml(hospitalTitle)}</div>
           ${
-
             hospitalNameUr
-
-              ? `<div class="print-letterhead-urdu" dir="rtl">${escapeHtml(hospitalNameUr)}</div>`
-
+              ? `<div class="print-header-band-urdu" dir="rtl">${escapeHtml(hospitalNameUr)}</div>`
               : ""
-
           }
-
+          ${
+            hospitalPhone
+              ? `<div class="print-header-band-phone">${escapeHtml(hospitalPhone)}</div>`
+              : ""
+          }
         </div>
-
-        <img class="print-letterhead-logo" src="${logoRight}" alt="">
-
-      </div>
-
-      <hr class="print-letterhead-rule">`;
-
+        <img class="print-logo" src="${logoRight}" alt="">
+      </div>`;
   }
 
 
 
   function portalPrintExtraCss() {
-
     return `
-
-.print-letterhead {
-
+.print-header-band {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
-
-    gap: 6px;
-
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-bottom: 3px;
     margin-bottom: 2px;
-
+    border-bottom: 1.5px solid #111;
 }
-
-.print-letterhead-logo {
-
-    width: 38px;
-
-    height: 38px;
-
+.print-logo {
+    width: 52px;
+    height: 52px;
     object-fit: contain;
-
     flex-shrink: 0;
-
 }
-
-.print-letterhead-center { flex: 1; text-align: center; min-width: 0; }
-
-.print-letterhead-title {
-
-    font-size: 9px;
-
+.print-header-band-center {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    padding: 0 4px;
+}
+.print-header-band-title {
+    font-size: 11px;
     font-weight: 700;
-
     text-transform: uppercase;
-
-    letter-spacing: 0.02em;
-
+    letter-spacing: 0.03em;
     line-height: 1.2;
-
 }
-
-.print-letterhead-urdu {
-
-    font-size: 9px;
-
+.print-header-band-urdu {
+    font-size: 10px;
     font-weight: 600;
-
-    line-height: 1.3;
-
+    line-height: 1.25;
+    margin-top: 1px;
 }
-
-.print-letterhead-rule {
-
-    border: none;
-
-    border-top: 1px solid #000;
-
-    margin: 2px 0 4px;
-
+.print-header-band-phone {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
 }
-
-.info-card { margin-bottom: 0; padding-top: 2px; padding-bottom: 2px; }
-
-.info-grid { gap: 3px 14px; font-size: 10px; line-height: 1.25; }
-
-.row { grid-template-columns: 100px 1fr; gap: 4px; }
-
-.label, .value { font-size: 10px; }
-
+.page-header .info-card {
+    margin-bottom: 0;
+    padding-top: 2px;
+    padding-bottom: 0;
+}
 `;
-
   }
 
 
@@ -756,11 +659,8 @@
 
 
     return `
-
       <div class="page-header">
-
-        ${renderLetterheadPrintCompact()}
-
+        ${renderPrintHeaderBand()}
         <div class="info-card">
 
           <div class="info-grid">
