@@ -9,8 +9,8 @@ window.LABFLOW_PORTAL_CONFIG = {
   logoLeft: "images/hospital_logo.png",
   logoRight: "images/logo.png",
   basePath: "",
-  /** Extra px added to header_height for compact letterhead on each print page */
-  letterheadHeaderExtra: 72,
-  /** Optional — override lab print_settings (same keys as main LabFlow app) */
+  /** Extra px for compact letterhead inside each print page header (standard A4) */
+  letterheadHeaderExtra: 50,
+  /** Optional overrides — portal uses standard A4 margins by default, not lab desk settings */
   printSettings: {},
 };
