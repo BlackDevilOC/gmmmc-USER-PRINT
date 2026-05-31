@@ -9,4 +9,8 @@ window.LABFLOW_PORTAL_CONFIG = {
   logoLeft: "images/hospital_logo.png",
   logoRight: "images/logo.png",
   basePath: "",
+  /** Extra px added to header_height for compact letterhead on each print page */
+  letterheadHeaderExtra: 72,
+  /** Optional — override lab print_settings (same keys as main LabFlow app) */
+  printSettings: {},
 };
