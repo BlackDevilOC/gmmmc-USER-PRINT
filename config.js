@@ -7,5 +7,5 @@ window.LABFLOW_PORTAL_CONFIG = {
   hospitalPhone: "071561223",
   logoLeft: "images/hospital_logo.png",
   logoRight: "images/logo.png",
-  basePath: "/gmmmc-USER-PRINT",
+  basePath: "", // Change this from "/gmmmc-USER-PRINT" to ""
 };
