@@ -70,10 +70,10 @@
     const g = gender ? (gender.endsWith(".") ? gender : `${gender}.`) : "—";
     return `${age}/${g}`;
   }
-
-  function renderLetterhead(patient) {
-    const logoLeft = assetUrl(cfg.logoLeft || "images/hospital_logo.png");
-    const logoRight = assetUrl(cfg.logoRight || "images/logo.png");
+function renderLetterhead(patient) {
+    // If a custom logo exists in config, use assetUrl, otherwise use the clean static path directly
+    const logoLeft = cfg.logoLeft ? assetUrl(cfg.logoLeft) : "images/hospital_logo.png";
+    const logoRight = cfg.logoRight ? assetUrl(cfg.logoRight) : "images/logo.png";
     const mr = escapeHtml(patient.mr_no ?? "—");
     const ageGender = escapeHtml(formatAgeGender(patient));
 
@@ -103,7 +103,6 @@
         </div>
       </header>`;
   }
-
   function toParamList(testValues) {
     const values =
       testValues && typeof testValues === "object"
