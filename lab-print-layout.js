@@ -22,7 +22,7 @@ function getFooterHeightPx(s) {
     }
     const marginTop = s?.footer_margin_top ?? 40;
     const paddingTop = s?.footer_padding_top ?? 20;
-    const fontSize = s?.footer_font_size ?? 11;
+    const fontSize = s?.footer_font_size ?? 20;
     const lineHeight = 1.35;
     let lines = 2;
     if (s?.display_pathologist_signature) lines += 1;
